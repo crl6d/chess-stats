@@ -1,28 +1,47 @@
 from flask import Flask, render_template
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
+import time
 
 app = Flask(__name__)
 
 USERNAME = 'unique-crl6d'
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0'}
 
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0'
+# Кэширование данных
+cache = {
+    'stats': None,
+    'stats_time': None,
+    'games': None,
+    'games_time': None
 }
 
+CACHE_TIMEOUT = timedelta(minutes=10)  # Время жизни кэша
+
 def get_chess_stats(username):
+    now = datetime.now()
+    if cache['stats'] and cache['stats_time'] > now - CACHE_TIMEOUT:
+        return cache['stats']
+    
     url = f"https://api.chess.com/pub/player/{username}/stats"
     response = requests.get(url, headers=headers)
     print(f"Статус код для статистики: {response.status_code}")
     if response.status_code == 200:
-        print(f"Статистика игрока: {response.json()}")
-        return response.json()
+        data = response.json()
+        cache['stats'] = data
+        cache['stats_time'] = now
+        print(f"Статистика игрока: {data}")
+        return data
     else:
         print("Ошибка при получении статистики")
         return None
 
 def get_daily_games(username):
-    today_date = datetime.now().strftime('%Y-%m-%d')
+    now = datetime.now()
+    if cache['games'] and cache['games_time'] > now - CACHE_TIMEOUT:
+        return cache['games']
+    
+    today_date = now.strftime('%Y-%m-%d')
     url = f"https://api.chess.com/pub/player/{username}/games/archives"
     response = requests.get(url, headers=headers)
     print(f"Статус код для архивов игр: {response.status_code}")
@@ -43,6 +62,8 @@ def get_daily_games(username):
                         games_today.append(game)
         
         print(f"Игры за сегодня: {games_today}")
+        cache['games'] = games_today
+        cache['games_time'] = now
         return games_today
     else:
         print("Ошибка при получении архивов игр")
