@@ -1,0 +1,25 @@
+body {
+    text-align: center;
+    background-color: #272727;
+    color: white;
+}
+.container {
+    margin: 50px auto;
+    width: 300px;
+    padding: 20px;
+    background-color: #4141419c;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.stat {
+    margin: 10px 0;
+}
+.winrate {
+    font-size: 24px;
+}
+.winrate.green {
+    color: green;
+}
+.winrate.red {
+    color: red;
+}

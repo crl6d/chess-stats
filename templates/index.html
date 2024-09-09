@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Stats</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Chess Stats</h1>
+    <div class="stat">Rapid: {{ rapid_rating }}</div>
+    <div class="stat">Blitz: {{ blitz_rating }}</div>
+    <div class="stat">Bullet: {{ bullet_rating }}</div>
+    <div class="winrate {{ color }}">Winrate Today: {{ winrate }}%</div>
+    <div class="stat">Total Games Today: {{ total_games }}</div>
+</div>
+</body>
+</html>
